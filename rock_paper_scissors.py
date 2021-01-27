@@ -1,5 +1,5 @@
 import tensorflow as tf
-import tensorflow_datasets as tfds 
+import tensorflow_datasets as tfds
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -45,15 +45,15 @@ print('Test labels shape:', label_test.shape)
 
 # Build the model
 model = keras.Sequential()
-model.add(keras.layers.Conv2D(64, (3, 3), input_shape = (30, 30, 3)))
+model.add(keras.layers.Conv2D(filters = 64, kernel_size = (3, 3), input_shape = (30, 30, 3)))
 model.add(keras.layers.Activation('relu'))
 model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
 
-model.add(keras.layers.Conv2D(32, (3, 3)))
+model.add(keras.layers.Conv2D(filters = 32, kernel_size = (3, 3)))
 model.add(keras.layers.Activation('relu'))
 model.add(keras.layers.MaxPooling2D(pool_size = (2, 2)))
 
-model.add(keras.layers.Conv2D(64, (3, 3)))
+model.add(keras.layers.Conv2D(filters = 64, kernel_size = (3, 3)))
 model.add(keras.layers.Activation('relu'))
 model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
 
@@ -62,11 +62,11 @@ model.add(keras.layers.Flatten())
 model.add(keras.layers.Dense(64)) #292*292 is the dimension after the 2 MaxPooling
 model.add(keras.layers.Activation('relu'))
 model.add(keras.layers.Dropout(0.5))
-model.add(keras.layers.Dense(len(unique_label_values), activation='softmax'))
+model.add(keras.layers.Dense(len(unique_label_values), activation = 'softmax'))
 #model.add(keras.layers.Dense(2, activation='softmax'))
 
 # Compile the model
-model.compile(loss='sparse_categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+model.compile(loss = 'sparse_categorical_crossentropy', optimizer = 'rmsprop', metrics = ['accuracy'])
 
 # Train the model
 model.fit(img_train, label_train, validation_data = (img_test, label_test), epochs = 10, batch_size = 105)
@@ -74,7 +74,7 @@ model.fit(img_train, label_train, validation_data = (img_test, label_test), epoc
 # Evaluate the model
 accuracy = model.evaluate(img_test, label_test, verbose = 0)
 print(model.metrics_names)
-print('Accuracy: %.2f%%' % (accuracy[1]*100))
+print('Accuracy: %.2f%%' % (accuracy[1] * 100))
 
 # Save the model
 json_file = model.to_json()
