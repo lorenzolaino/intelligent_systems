@@ -9,16 +9,15 @@ img_train, label_train, img_test, label_test = RPS_process_data.train_test_split
 label_names = RPS_process_data.label_names
 
 # Load json and create model
-file = open(
-    'D:\\Utenti\\Marco\\Desktop\\Insubria\\Laurea Magistrale\\Intelligent Systems\\Exam Project Gatto Laino\\intelligent_systems\\rps_50_cnn_model.json',
-    'r')
+json_path_file = 'D:\\Utenti\\Marco\\Desktop\\Insubria\\Laurea Magistrale\\Intelligent Systems\\Exam Project Gatto Laino\\intelligent_systems\\rps_50_cnn_model.json'
+hdf5_path_file = 'D:\\Utenti\\Marco\\Desktop\\Insubria\\Laurea Magistrale\\Intelligent Systems\\Exam Project Gatto Laino\\intelligent_systems\\rps_50_cnn_model_weights.hdf5'
+file = open(json_path_file, 'r')
 json_model = file.read()
 file.close()
 
 loaded_model = keras.models.model_from_json(json_model)
 # Load weights
-loaded_model.load_weights(
-    'D:\\Utenti\\Marco\\Desktop\\Insubria\\Laurea Magistrale\\Intelligent Systems\\Exam Project Gatto Laino\\intelligent_systems\\rps_50_cnn_model_weights.hdf5')
+loaded_model.load_weights(hdf5_path_file)
 
 predictions = loaded_model.predict(img_test)
 

@@ -13,40 +13,41 @@ RPS_process_data.print_dataset_shapes()
 
 def build_efn_b0_model(num_classes):
     inputs = tf.keras.layers.Input(shape=(50, 50, 3))
-    efn_b0_model = EfficientNetB0(include_top=False, input_tensor=inputs, weights="imagenet")
+    efn_b0_model = EfficientNetB0(include_top=False, input_tensor=inputs, weights='imagenet')
 
     # Freeze the pretrained weights
     efn_b0_model.trainable = False
 
     # Rebuild top
-    x = tf.keras.layers.GlobalAveragePooling2D(name="avg_pool")(efn_b0_model.output)
+    x = tf.keras.layers.GlobalAveragePooling2D(name='avg_pool')(efn_b0_model.output)
     x = tf.keras.layers.BatchNormalization()(x)
 
     top_dropout_rate = 0.5
-    x = tf.keras.layers.Dropout(top_dropout_rate, name="top_dropout")(x)
-    outputs = tf.keras.layers.Dense(num_classes, activation="softmax", name="pred")(x)
+    x = tf.keras.layers.Dropout(top_dropout_rate, name='top_dropout')(x)
+    outputs = tf.keras.layers.Dense(num_classes, activation='softmax', name='pred')(x)
+
+    efn_b0_model = tf.keras.Model(inputs, outputs, name='EfficientNet')
 
     # Compile
-    efn_b0_model = tf.keras.Model(inputs, outputs, name="EfficientNet")
     optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
     efn_b0_model.compile(
-        optimizer=optimizer, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+        optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy']
     )
     return efn_b0_model
 
 
 def plot_hist(hist):
-    plt.plot(hist.history["accuracy"])
-    plt.plot(hist.history["val_accuracy"])
-    plt.title("model accuracy")
-    plt.ylabel("accuracy")
-    plt.xlabel("epoch")
-    plt.legend(["train", "validation"], loc="upper left")
+    plt.plot(hist.history['accuracy'])
+    plt.plot(hist.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
     plt.show()
 
 
 model = build_efn_b0_model(num_classes=len(label_names))
-epochs = 2
+epochs = 5
 hist = model.fit(img_train, label_train, epochs=epochs, validation_data=(img_test, label_test), verbose=2)
 plot_hist(hist)
 
