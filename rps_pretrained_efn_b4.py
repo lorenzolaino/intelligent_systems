@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from sklearn.metrics import confusion_matrix
-from tensorflow.keras.applications.efficientnet import EfficientNetB2
+from tensorflow.keras.applications.efficientnet import EfficientNetB4
 
 from rps_process_data import RPSProcessData
 
@@ -15,15 +15,15 @@ RPS_process_data.print_dataset_shapes()
 RPS_process_data.plot_rnd_imgs()
 
 
-def build_efn_b2_model(num_classes):
+def build_efn_b4_model(num_classes):
     inputs = tf.keras.layers.Input(shape=(50, 50, 3))
-    efn_b2_model = EfficientNetB2(include_top=False, input_tensor=inputs, weights="imagenet")
+    efn_b4_model = EfficientNetB4(include_top=False, input_tensor=inputs, weights="imagenet")
 
     # Freeze the pretrained weights
-    efn_b2_model.trainable = False
+    efn_b4_model.trainable = False
 
     # Rebuild top
-    x = tf.keras.layers.GlobalAveragePooling2D(name="avg_pool")(efn_b2_model.output)
+    x = tf.keras.layers.GlobalAveragePooling2D(name="avg_pool")(efn_b4_model.output)
     x = tf.keras.layers.BatchNormalization()(x)
 
     top_dropout_rate = 0.5
@@ -31,12 +31,12 @@ def build_efn_b2_model(num_classes):
     outputs = tf.keras.layers.Dense(num_classes, activation="softmax", name="pred")(x)
 
     # Compile
-    efn_b2_model = tf.keras.Model(inputs, outputs, name="EfficientNet")
+    efn_b4_model = tf.keras.Model(inputs, outputs, name="EfficientNet")
     optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
-    efn_b2_model.compile(
+    efn_b4_model.compile(
         optimizer=optimizer, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
-    return efn_b2_model
+    return efn_b4_model
 
 
 def plot_hist(hist):
@@ -49,7 +49,7 @@ def plot_hist(hist):
     plt.show()
 
 
-model = build_efn_b2_model(num_classes=len(label_names))
+model = build_efn_b4_model(num_classes=len(label_names))
 epochs = 5
 hist = model.fit(img_train, label_train, epochs=epochs, validation_data=(img_test, label_test),
                  verbose=2, batch_size=105)
